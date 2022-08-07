@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-export default class Demo extends Phaser.Scene {
+export default class Game extends Phaser.Scene {
   constructor() {
     super('GameScene');
   }
@@ -13,6 +13,11 @@ export default class Demo extends Phaser.Scene {
     const logo = this.add.image(32, 32, 'logo');
     logo.setScale(0.15)
 
+    this.input.on('pointerup', (pointer: any) => {
+      this.scene.start('MenuScene');
+    }, this);
+
+
     this.tweens.add({
       targets: logo,
       scaleX: 0.2,
@@ -22,5 +27,6 @@ export default class Demo extends Phaser.Scene {
       yoyo: true,
       repeat: -1
     });
+
   }
 }
