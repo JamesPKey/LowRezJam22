@@ -30,9 +30,11 @@ export default class MenuScene extends Phaser.Scene {
     const rect = this.add.rectangle(8, 32 + (selection * 16), 2, 2, 0xffffff)
 
     const newText = this.add.text(32, 32, "New")
+    newText.setColor("#fff")
     newText.setOrigin(0.5, 0.5)
 
     const helpText = this.add.text(32, 48, "Help")
+    helpText.setColor("#fff")
     helpText.setOrigin(0.5, 0.5)
 
   }
