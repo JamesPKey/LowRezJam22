@@ -29,4 +29,10 @@ export default class Game extends Phaser.Scene {
     });
 
   }
+
+  update(time: number, delta: number): void {
+    if (time > 2000)
+      this.scene.start("MenuScene")
+    console.log(time)
+  }
 }
