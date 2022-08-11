@@ -30,19 +30,19 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
-    if (this.keyW?.isDown) {
+    if (this.keyW?.isDown && this.playerY > 0) {
       this.playerY = this.playerY - 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyA?.isDown) {
+    if (this.keyA?.isDown && this.playerX > 0) {
       this.playerX = this.playerX - 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyS?.isDown) {
+    if (this.keyS?.isDown && this.playerY < 64) {
       this.playerY = this.playerY + 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyD?.isDown) {
+    if (this.keyD?.isDown  && this.playerX < 64) {
       this.playerX = this.playerX + 1
       this.player.setPosition(this.playerX, this.playerY)
     }
