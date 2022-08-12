@@ -1,0 +1,9 @@
+@font-face {
+    font-family: "BMmini";
+    src: url(assets/BMmini.TTF) format("truetype");
+}
+
+body {
+    margin: 0;
+    background: #333;
+}
