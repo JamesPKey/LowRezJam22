@@ -56,11 +56,14 @@ export default class Game extends Phaser.Scene {
       }
     }
     if (this.keys?.E.isDown) {
-      const playerHitbox = this.player.hitbox()
-      this.drawables.find(drawable => !!drawable.interaction && drawable.interactable(playerHitbox))?.interaction()
-
       // Close any active textbox
       this.closeTextBox();
+
+      const playerHitbox = this.player.hitbox()
+      const interactable = this.drawables.find(drawable => !!drawable.interaction && drawable.interactable(playerHitbox))
+      interactable?.interaction()
+
+
     }
 
     this.listenForDebugInputs()
