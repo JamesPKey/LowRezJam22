@@ -1,15 +1,16 @@
 import Phaser from 'phaser';
-import { blackColour, InputControls, textboxColour, whiteColour } from '../Common';
+import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
+  private eKeyDown: boolean = false
 
   private player!: Player;
   private drawables: Obstacle[] = []
 
-  private activeTextBox?: TextBox;
+  private dialog!: Dialog;
 
   constructor() {
     super('GameScene');
@@ -22,48 +23,59 @@ export default class Game extends Phaser.Scene {
       new Obstacle(this, 8, 32, 16, 64),
       new Obstacle(this, 48, 16, 8, 8),
       new Obstacle(this, 48, 48, 12, 12),
-      new Drawable(this, 60, 32, 3, 2, 0x006994, [], () => this.createTextBox('You found the \ntreasure!'))
+      new Drawable(this, 60, 32, 3, 2, 0x006994, [], () => {
+        this.dialog.addMessage("Its a sink!")
+        this.dialog.addMessage("Unlocked: Go left!")
+      })
     )
 
     this.player = new Player(this, 32, 32)
 
+    this.dialog = new Dialog(this)
   }
 
   update(time: number) {
     if (time % 3 != 0) {return}
-    if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
-      const playerHitbox = this.player.hitbox(0, -1)
-      if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
-        this.player.setY(this.player.y - 1)
+    if(!this.dialog.activeTextBox) {
+      if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
+        const playerHitbox = this.player.hitbox(0, -1)
+        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+          this.player.setY(this.player.y - 1)
+        }
+      }
+      if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
+        const playerHitbox = this.player.hitbox(-1, 0)
+        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+          this.player.setX(this.player.x - 1)
+        }
+      }
+      if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
+        const playerHitbox = this.player.hitbox(0, 1)
+        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+          this.player.setY(this.player.y + 1)
+        }
+      }
+      if (this.keys?.D.isDown && this.player.hitbox().right < 64) {
+        const playerHitbox = this.player.hitbox(1, 0)
+        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+          this.player.setX(this.player.x + 1)
+        }
       }
     }
-    if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
-      const playerHitbox = this.player.hitbox(-1, 0)
-      if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
-        this.player.setX(this.player.x - 1)
-      }
-    }
-    if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
-      const playerHitbox = this.player.hitbox(0, 1)
-      if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
-        this.player.setY(this.player.y + 1)
-      }
-    }
-    if (this.keys?.D.isDown && this.player.hitbox().right < 64) {
-      const playerHitbox = this.player.hitbox(1, 0)
-      if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
-        this.player.setX(this.player.x + 1)
-      }
-    }
+
     if (this.keys?.E.isDown) {
-      // Close any active textbox
-      this.closeTextBox();
+      if (!this.eKeyDown) { this.eKeyDown = true}
+    } else if (this.eKeyDown) {
+      this.eKeyDown = false
+      if(!!this.dialog.activeTextBox) {
+        // Close any active textbox
+        this.dialog.nextMessage();
+        return
+      }
 
       const playerHitbox = this.player.hitbox()
       const interactable = this.drawables.find(drawable => !!drawable.interaction && drawable.interactable(playerHitbox))
       interactable?.interaction()
-
-
     }
 
     this.listenForDebugInputs()
@@ -75,27 +87,8 @@ export default class Game extends Phaser.Scene {
 
   listenForDebugInputs() {
     if (DEBUG_MODE && this.keys?.T.isDown) {
-      this.createTextBox('You found the \ntreasure!')
+      this.dialog.addMessage('You found the \ntreasure!')
     }
-  }
-
-  createTextBox(text: string) {
-      const textboxHeight = 20
-      const textSize = '0.8em'
-
-      this.activeTextBox ||= {
-        container: this.add.rectangle(32, 64 - (textboxHeight / 2), 64, textboxHeight, textboxColour),
-        text: this.add.text(1, 45, text, {
-          fontFamily: 'BMmini',
-          fontSize: textSize,
-        }),
-     } 
-  }
-
-  closeTextBox() {
-    this.activeTextBox?.text.destroy();
-    this.activeTextBox?.container.destroy();
-    this.activeTextBox = undefined
   }
 }
 
@@ -170,6 +163,45 @@ class Obstacle extends Drawable {
   constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number) {
     super(scene, x, y, w, h, blackColour, ["Obstacle"])
   }
+}
+
+class Dialog {
+  public messageQueue: string[] = []
+  public scene: Phaser.Scene
+
+  public activeTextBox?: TextBox
+
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene
+  }
+
+  addMessage(text: string) {
+    const textboxHeight = 20
+    if (!this.messageQueue.includes(text)){
+      this.messageQueue.push(text)
+    }
+
+    this.activeTextBox ||= {
+      container: this.scene.add.rectangle(32, 64 - (textboxHeight / 2), 64, textboxHeight, textboxColour),
+      text: this.scene.add.text(1, 45, this.messageQueue[0], gameFont),
+   } 
+  }
+
+  nextMessage() {
+    this.messageQueue.shift()
+    if (!!this.messageQueue.length){
+      this.activeTextBox?.text.setText(this.messageQueue[0])
+    } else {
+      this.closeTextBox()
+    }
+  }
+
+  closeTextBox() {
+    this.activeTextBox?.text.destroy();
+    this.activeTextBox?.container.destroy();
+    this.activeTextBox = undefined
+  }
+
 }
 
 
