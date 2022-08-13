@@ -10,5 +10,6 @@ export default {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
   },
+  pixelArt: true,
   antialias: false,
 };
