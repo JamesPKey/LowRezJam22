@@ -20,7 +20,8 @@ export default class Game extends Phaser.Scene {
     this.player = new Player(this, 32, 32)
   }
 
-  update() {
+  update(time: any) {
+    if (time % 3 != 0) {return}
     if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
       this.player.setY(this.player.y - 1)
     }
