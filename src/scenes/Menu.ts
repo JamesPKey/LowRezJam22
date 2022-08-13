@@ -1,10 +1,8 @@
 import Phaser from 'phaser';
-import { gameFont } from '../Common';
+import { gameFont, InputControls } from '../Common';
 
 export default class MenuScene extends Phaser.Scene {
-  private keyW: any;
-  private keyS: any;
-  private keyE: any;
+  private keys?: InputControls;
   private selection = 0
   private menuIndicator: any
 
@@ -31,9 +29,7 @@ export default class MenuScene extends Phaser.Scene {
       repeat: -1
     });
 
-    this.keyW = this.input.keyboard.addKey('W')
-    this.keyS = this.input.keyboard.addKey('S')
-    this.keyE = this.input.keyboard.addKey('E')
+    this.keys = new InputControls(this)
 
     this.menuIndicator = this.add.rectangle(12, 32 + (this.selection * 16), 2, 2, 0xffffff)
 
@@ -47,15 +43,15 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   update() {
-    if (this.keyW?.isDown) {
+    if (this.keys?.W.isDown) {
       this.selection = 0
       this.menuIndicator.setPosition(12, 32)
     }
-    if (this.keyS?.isDown) {
+    if (this.keys?.S.isDown) {
       this.selection = 1
       this.menuIndicator.setPosition(12, 48)
     }
-    if(this.keyE?.isDown) {
+    if(this.keys?.E.isDown) {
       if (this.selection == 0) {
         this.scene.start('GameScene');
       } else {

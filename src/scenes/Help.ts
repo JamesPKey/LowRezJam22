@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import { gameFont } from '../Common';
+import { gameFont, InputControls } from '../Common';
 
 export default class MenuScene extends Phaser.Scene {
-  private keyE: any;
+  private keys?: InputControls;
 
   constructor() {
     super('HelpScene');
@@ -11,7 +11,7 @@ export default class MenuScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    this.keyE = this.input.keyboard.addKey('E')
+    this.keys = new InputControls(this)
 
     
     const helpText = this.add.text(32, 8, "Help", gameFont)
@@ -34,7 +34,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   update() {
-    if(this.keyE?.isDown) {
+    if(this.keys?.E.isDown) {
         // Todo: Go back
     }
   }

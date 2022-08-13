@@ -1,16 +1,10 @@
 import Phaser from 'phaser';
-import { textboxColour } from '../Common';
+import { InputControls, textboxColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
 
 export default class Game extends Phaser.Scene {
-  private keys: any;
-  private keyW: any;
-  private keyA: any;
-  private keyS: any;
-  private keyD: any;
-  private keyE: any;
-  private keyT: any;
+  private keys?: InputControls;
 
   private playerX: any;
   private playerY: any;
@@ -32,23 +26,23 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
-    if (this.keyW?.isDown && this.playerY > 0) {
+    if (this.keys?.W.isDown && this.playerY > 0) {
       this.playerY = this.playerY - 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyA?.isDown && this.playerX > 0) {
+    if (this.keys?.A.isDown && this.playerX > 0) {
       this.playerX = this.playerX - 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyS?.isDown && this.playerY < 64) {
+    if (this.keys?.S.isDown && this.playerY < 64) {
       this.playerY = this.playerY + 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyD?.isDown  && this.playerX < 64) {
+    if (this.keys?.D.isDown  && this.playerX < 64) {
       this.playerX = this.playerX + 1
       this.player.setPosition(this.playerX, this.playerY)
     }
-    if (this.keyE?.isDown) {
+    if (this.keys?.E.isDown) {
       //Todo: interact
 
       // Close any active textbox
@@ -59,16 +53,11 @@ export default class Game extends Phaser.Scene {
   }
 
   registerInputs() {
-    this.keys.W = this.input.keyboard.addKey('W')
-    this.keys.a = this.input.keyboard.addKey('A')
-    this.keys.s = this.input.keyboard.addKey('S')
-    this.keys.d = this.input.keyboard.addKey('D')
-    this.keyE = this.input.keyboard.addKey('E')
-    this.keyT = this.input.keyboard.addKey('T')
+    this.keys = new InputControls(this)
   }
 
   listenForDebugInputs() {
-    if (DEBUG_MODE && this.keyT?.isDown) {
+    if (DEBUG_MODE && this.keys?.T.isDown) {
       this.createTextBox('You found the \ntreasure!')
     }
   }
@@ -97,4 +86,3 @@ interface TextBox {
   container: Phaser.GameObjects.Rectangle;
   text: Phaser.GameObjects.Text;
 }
-
