@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
+import { textboxColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
 
 export default class Game extends Phaser.Scene {
+  private keys: any;
   private keyW: any;
   private keyA: any;
   private keyS: any;
@@ -57,10 +59,10 @@ export default class Game extends Phaser.Scene {
   }
 
   registerInputs() {
-    this.keyW = this.input.keyboard.addKey('W')
-    this.keyA = this.input.keyboard.addKey('A')
-    this.keyS = this.input.keyboard.addKey('S')
-    this.keyD = this.input.keyboard.addKey('D')
+    this.keys.W = this.input.keyboard.addKey('W')
+    this.keys.a = this.input.keyboard.addKey('A')
+    this.keys.s = this.input.keyboard.addKey('S')
+    this.keys.d = this.input.keyboard.addKey('D')
     this.keyE = this.input.keyboard.addKey('E')
     this.keyT = this.input.keyboard.addKey('T')
   }
@@ -73,7 +75,6 @@ export default class Game extends Phaser.Scene {
 
   createTextBox(text: string) {
       const textboxHeight = 20
-      const textboxColour = 0x808080
       const textSize = '0.8em'
 
       this.activeTextBox ||= {
