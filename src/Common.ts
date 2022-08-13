@@ -23,5 +23,6 @@ const gameFont = {
 
 const blackColour = 0x000000
 const textboxColour = 0x808080
+const whiteColour = 0xffffff
 
-export {InputControls, gameFont, blackColour, textboxColour};
+export {InputControls, gameFont, blackColour, textboxColour, whiteColour};
