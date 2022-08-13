@@ -11,7 +11,7 @@ export default class Game extends Phaser.Scene {
 
   create() {
     const logo = this.add.image(32, 32, 'logo');
-    logo.setScale(0.15)
+    logo.setScale(0.10)
 
     this.input.on('pointerup', (pointer: any) => {
       this.scene.start('MenuScene');

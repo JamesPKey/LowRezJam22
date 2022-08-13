@@ -1,9 +1,8 @@
 import Phaser from 'phaser';
+import { gameFont, InputControls } from '../Common';
 
 export default class MenuScene extends Phaser.Scene {
-  private keyW: any;
-  private keyS: any;
-  private keyE: any;
+  private keys?: InputControls;
   private selection = 0
   private menuIndicator: any
 
@@ -14,7 +13,10 @@ export default class MenuScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    const logo = this.add.text(32, 8, "Game")
+    const logo = this.add.text(32, 8, "Game", {
+      fontFamily: 'BMmini',
+      fontSize: '2em',
+    })
     logo.setOrigin(0.5, 0.5)
 
     this.tweens.add({
@@ -27,31 +29,29 @@ export default class MenuScene extends Phaser.Scene {
       repeat: -1
     });
 
-    this.keyW = this.input.keyboard.addKey('W')
-    this.keyS = this.input.keyboard.addKey('S')
-    this.keyE = this.input.keyboard.addKey('E')
+    this.keys = new InputControls(this)
 
-    this.menuIndicator = this.add.rectangle(4, 32 + (this.selection * 16), 2, 2, 0xffffff)
+    this.menuIndicator = this.add.rectangle(12, 32 + (this.selection * 16), 2, 2, 0xffffff)
 
-    const newText = this.add.text(32, 32, "New")
+    const newText = this.add.text(32, 32, "New", gameFont)
     newText.setColor("#fff")
     newText.setOrigin(0.5, 0.5)
 
-    const helpText = this.add.text(32, 48, "Help")
+    const helpText = this.add.text(32, 48, "Help", gameFont)
     helpText.setColor("#fff")
     helpText.setOrigin(0.5, 0.5)
   }
 
   update() {
-    if (this.keyW?.isDown) {
+    if (this.keys?.W.isDown) {
       this.selection = 0
-      this.menuIndicator.setPosition(4, 32)
+      this.menuIndicator.setPosition(12, 32)
     }
-    if (this.keyS?.isDown) {
+    if (this.keys?.S.isDown) {
       this.selection = 1
-      this.menuIndicator.setPosition(4, 48)
+      this.menuIndicator.setPosition(12, 48)
     }
-    if(this.keyE?.isDown) {
+    if(this.keys?.E.isDown) {
       if (this.selection == 0) {
         this.scene.start('GameScene');
       } else {
