@@ -21,16 +21,16 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
-    if (this.keys?.W.isDown && this.player.y > 0) {
+    if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
       this.player.setY(this.player.y - 1)
     }
-    if (this.keys?.A.isDown && this.player.x > 0) {
+    if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
       this.player.setX(this.player.x - 1)
     }
-    if (this.keys?.S.isDown && this.player.y < 64) {
+    if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
       this.player.setY(this.player.y + 1)
     }
-    if (this.keys?.D.isDown  && this.player.x < 64) {
+    if (this.keys?.D.isDown  && this.player.hitbox().right < 64) {
       this.player.setX(this.player.x + 1)
     }
     if (this.keys?.E.isDown) {
@@ -78,15 +78,19 @@ interface TextBox {
   text: Phaser.GameObjects.Text;
 }
 
-class Player {
+class Drawable {
   public x: number
   public y: number
+  public w: number
+  public h: number
   public drawable: any
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number) {
     this.x = x
     this.y = y
-    this.drawable = scene.add.rectangle(this.x, this.y, 2, 2, whiteColour)
+    this.w = w
+    this.h = h
+    this.drawable = scene.add.rectangle(this.x, this.y, this.w, this.h, whiteColour)
   }
 
   setX = (x: number) => {
@@ -97,5 +101,18 @@ class Player {
   setY = (y: number) => {
     this.y = y
     this.drawable.setPosition(this.x, this.y)
+  }
+
+  hitbox = () => ({
+    top: this.y - (this.h/2),
+    left: this.x - (this.w/2),
+    bottom: this.y + (this.h/2),
+    right: this.x + (this.w/2)
+  })
+}
+
+class Player extends Drawable {
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, 2, 2)
   }
 }
