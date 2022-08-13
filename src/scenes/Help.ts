@@ -35,9 +35,8 @@ export default class MenuScene extends Phaser.Scene {
 
   update() {
     if(this.keys?.E.isDown) {
-        // Todo: Go back
+      this.scene.start("MenuScene")
     }
   }
   
-
 }
