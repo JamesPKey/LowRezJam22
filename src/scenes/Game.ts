@@ -29,7 +29,7 @@ export default class Game extends Phaser.Scene {
 
   }
 
-  update(time: any) {
+  update(time: number) {
     if (time % 3 != 0) {return}
     if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
       const playerHitbox = this.player.hitbox(0, -1)
