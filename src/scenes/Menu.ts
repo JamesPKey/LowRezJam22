@@ -13,7 +13,7 @@ export default class MenuScene extends Phaser.Scene {
   preload() {}
 
   create() {
-    const logo = this.add.text(32, 8, "Game", {
+    const logo = this.add.text(32, 8, "Escape", {
       fontFamily: 'BMmini',
       fontSize: '2em',
     })
