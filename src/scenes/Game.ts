@@ -20,13 +20,31 @@ export default class Game extends Phaser.Scene {
     this.registerInputs()
 
     this.drawables.push(
-      new Obstacle(this, 8, 32, 16, 64),
-      new Obstacle(this, 48, 16, 8, 8),
-      new Obstacle(this, 48, 48, 12, 12),
-      new Drawable(this, 60, 32, 3, 2, 0x006994, [], () => {
+      //Floor
+      new Drawable(this, 32, 32, 64, 64, 0x6e470b),
+      // Top Left room
+      new Obstacle(this, 8, 12, 16, 24),
+      //Top Middle room
+      new Obstacle(this, 20, 16, 8, 2), // Top wall left
+      new Obstacle(this, 40, 16, 28, 2), // Top wall right
+      new Obstacle(this, 40, 10, 2, 20), // Top wall going up
+      //Sink
+      new Drawable(this, 42, 18, 2, 2, 0x006994, [], () => {
         this.dialog.addMessage("Its a sink!")
-        this.dialog.addMessage("Unlocked: Go left!")
-      })
+      }),
+      //Mirror
+      new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a mirror!")
+      }),
+
+      //Bottom wall
+      new Obstacle(this, 15, 63, 30, 2), // Top wall left
+      new Obstacle(this, 49, 63, 30, 2), // Top wall right
+
+      //Mirror
+      new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a door!")
+      }),
     )
 
     this.player = new Player(this, 32, 32)
@@ -159,8 +177,8 @@ class Player extends Drawable {
 }
 
 class Obstacle extends Drawable {
-  constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number) {
-    super(scene, x, y, w, h, blackColour, ["Obstacle"])
+  constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number, colour: number = blackColour) {
+    super(scene, x, y, w, h, colour, ["Obstacle"])
   }
 }
 
