@@ -11,6 +11,7 @@ export default class Game extends Phaser.Scene {
   private drawables: Obstacle[] = []
 
   private dialog!: Dialog;
+  private inventory!: Inventory;
 
   constructor() {
     super('GameScene');
@@ -25,12 +26,16 @@ export default class Game extends Phaser.Scene {
       // Top Left room
       new Obstacle(this, 8, 12, 16, 24),
       //Top Middle room
-      new Obstacle(this, 20, 16, 8, 2), // Top wall left
-      new Obstacle(this, 40, 16, 28, 2), // Top wall right
-      new Obstacle(this, 40, 10, 2, 20), // Top wall going up
+      new Obstacle(this, 20, 16, 8, 2),
+      new Obstacle(this, 40, 16, 28, 2),
+      new Obstacle(this, 40, 10, 2, 20),
       //Sink
       new Drawable(this, 42, 18, 2, 2, 0x006994, [], () => {
         this.dialog.addMessage("Its a sink!")
+        if (this.inventory.items.includes("Bottle")) {
+          this.dialog.addMessage("Filled up \nBottle!")
+          this.inventory.items.push("Water")
+        }
       }),
       //Mirror
       new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
@@ -38,18 +43,29 @@ export default class Game extends Phaser.Scene {
       }),
 
       //Bottom wall
-      new Obstacle(this, 15, 63, 30, 2), // Top wall left
-      new Obstacle(this, 49, 63, 30, 2), // Top wall right
+      new Obstacle(this, 15, 63, 30, 2),
+      new Obstacle(this, 49, 63, 30, 2),
 
       //Mirror
       new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
         this.dialog.addMessage("Its a door!")
       }),
+
+      //Bin
+      new Drawable(this, 42, 1, 2, 2, 0x404040, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a bin!")
+        if (!this.inventory.items.includes("Bottle")) {
+          this.dialog.addMessage("Picked up \nBottle!")
+          this.inventory.items.push("Bottle")
+        }
+      })
     )
 
     this.player = new Player(this, 32, 32)
 
     this.dialog = new Dialog(this)
+
+    this.inventory = new Inventory()
 
     // Initial text
     this.dialog.addMessage("Where am I?")
@@ -178,6 +194,10 @@ class Player extends Drawable {
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 2, 2, whiteColour)
   }
+}
+
+class Inventory {
+  public items: string[] = []
 }
 
 class Obstacle extends Drawable {
