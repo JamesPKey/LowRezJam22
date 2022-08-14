@@ -50,6 +50,10 @@ export default class Game extends Phaser.Scene {
     this.player = new Player(this, 32, 32)
 
     this.dialog = new Dialog(this)
+
+    // Initial text
+    this.dialog.addMessage("Where am I?")
+    this.dialog.addMessage("Need to  \nescape!")
   }
 
   update(time: number) {
