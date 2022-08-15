@@ -21,15 +21,42 @@ export default class Game extends Phaser.Scene {
     this.registerInputs()
 
     this.drawables.push(
-      //Floor
+      // House floor
       new Drawable(this, 32, 32, 64, 64, 0x6e470b),
+      // House floor
+      new Drawable(this, 52, 8, 24, 16, 0x7ec850),
+
       // Top Left room
       new Obstacle(this, 8, 12, 16, 24),
-      //Top Middle room
-      new Obstacle(this, 20, 16, 8, 2),
-      new Obstacle(this, 40, 16, 28, 2),
+
+      // Top Middle room
+      new Obstacle(this, 20, 16, 10, 2),
+      new Obstacle(this, 42, 16, 26, 2),
       new Obstacle(this, 40, 10, 2, 20),
-      //Sink
+
+      // Garden wall
+      new Obstacle(this, 61, 16, 6, 2),
+
+      // Bottom wall
+      new Obstacle(this, 15, 63, 30, 2),
+      new Obstacle(this, 49, 63, 30, 2),
+
+      // Office / kitchen wall
+      new Obstacle(this, 40, 38, 2, 24),
+      new Obstacle(this, 40, 58, 2, 8),
+      new Obstacle(this, 52, 44, 26, 2),
+
+      // Lounge wall
+      new Obstacle(this, 24, 52, 2, 20),
+      new Obstacle(this, 10, 39, 2, 8),
+      new Obstacle(this, 15, 26, 2, 4),
+      new Obstacle(this, 15, 34, 2, 4),
+
+      new Obstacle(this, 4, 42, 10, 2),
+      new Obstacle(this, 21, 42, 8, 2),
+      new Obstacle(this, 12, 35, 6, 2),
+
+      // Sink
       new Drawable(this, 42, 18, 2, 2, 0x006994, [], () => {
         this.dialog.addMessage("Its a sink!")
         if (this.inventory.items.includes("Bottle")) {
@@ -37,18 +64,24 @@ export default class Game extends Phaser.Scene {
           this.inventory.items.push("Water")
         }
       }),
-      //Mirror
+      // Mirror
       new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
         this.dialog.addMessage("Its a mirror!")
       }),
 
-      //Bottom wall
-      new Obstacle(this, 15, 63, 30, 2),
-      new Obstacle(this, 49, 63, 30, 2),
-
-      //Mirror
+      // Front door
       new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
         this.dialog.addMessage("Its a door!")
+      }),
+
+      // Back door
+      new Drawable(this, 56, 16, 4, 2, 0x5a3300, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a door!")
+      }),
+
+      // Back hole
+      new Drawable(this, 27, 16, 4, 2, 0x381100, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a hole!")
       }),
 
       //Bin
@@ -223,7 +256,7 @@ class Dialog {
     }
 
     this.activeTextBox ||= {
-      container: this.scene.add.rectangle(32, 64 - (textboxHeight / 2), 64, textboxHeight, textboxColour),
+      container: this.scene.add.rectangle(32, 64 - (textboxHeight / 2), 64, textboxHeight, textboxColour, 0x22),
       text: this.scene.add.text(1, 45, this.messageQueue[0], gameFont),
    } 
   }
