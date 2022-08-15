@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
-const DEBUG_GHOST_MODE = true //Disable collision
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
@@ -19,6 +18,8 @@ export default class Game extends Phaser.Scene {
   private missingFloorboard!: Drawable;
   private backDoor!: Drawable;
   private mirror!: Drawable;
+  private gardenShroud!: Drawable;
+  private secretRoomShroud!: Drawable;
 
   constructor() {
     super('GameScene');
@@ -50,7 +51,8 @@ export default class Game extends Phaser.Scene {
       if (this.inventory.items.includes("Back Key")) {
         this.dialog.addMessage("Opened with \nBack Key")
         this.backDoor.drawable?.destroy()
-        this.drawables = this.drawables.filter(drawable => drawable != this.backDoor)
+        this.gardenShroud.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.backDoor && drawable != this.gardenShroud)
       }
     })
 
@@ -64,7 +66,20 @@ export default class Game extends Phaser.Scene {
       }
       this.mirror.drawable?.destroy()
       this.drawables = this.drawables.filter(drawable => drawable != this.mirror)
-    }),
+    })
+
+    this.gardenShroud = new Drawable(this, 52, 7, 24, 16, 0x000000, ["Obstacle"], () => {
+    })
+
+    this.secretRoomShroud = new Drawable(this, 7, 10, 16, 24, 0x000000, ["Obstacle"], () => {
+      this.dialog.addMessage("The mirror \nbroke!")
+      if (this.inventory.items.includes("Torch")) {
+        this.dialog.addMessage("Shines the \ntorch!")
+        this.dialog.addMessage("A hidden \nspace!")
+        this.secretRoomShroud.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.secretRoomShroud)
+      }
+    })
 
     this.drawables.push(
       // House floor
@@ -74,7 +89,8 @@ export default class Game extends Phaser.Scene {
 
       // Top Left room
       new Obstacle(this, 15, 12, 2, 24),
-      new Obstacle(this, 8, 23, 16, 2),
+      new Obstacle(this, 3, 23, 6, 2),
+      new Obstacle(this, 13, 23, 6, 2),
 
       // Top Middle room
       new Obstacle(this, 20, 16, 10, 2),
@@ -185,21 +201,23 @@ export default class Game extends Phaser.Scene {
 
       this.missingFloorboard,
 
-      new Drawable(this, 22, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 22, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
       }),
 
-      new Drawable(this, 27, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 27, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
       }),
 
-      new Drawable(this, 32, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 32, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
         if (!this.inventory.items.includes("Torch")) {
           this.dialog.addMessage("Handle is\n slippery!")
-          this.dialog.addMessage("Clean handle \n with water!")
-          this.dialog.addMessage("Picked up \nTorch!")
-          this.inventory.items.push("Torch")
+          if (this.inventory.items.includes("Water")){
+            this.dialog.addMessage("Clean handle \n with water!")
+            this.dialog.addMessage("Picked up \nTorch!")
+            this.inventory.items.push("Torch")
+          }
         }
       }),
 
@@ -257,6 +275,8 @@ export default class Game extends Phaser.Scene {
         }
       }),
 
+      this.gardenShroud,
+
       //Secret Room
 
       //Key
@@ -265,7 +285,9 @@ export default class Game extends Phaser.Scene {
           this.dialog.addMessage("Picked up key!")
           this.inventory.items.push("Front Key")
         }
-      })
+      }),
+
+      this.secretRoomShroud
     )
 
     this.drawables.forEach(drawable => drawable.createDrawable())
@@ -288,25 +310,25 @@ export default class Game extends Phaser.Scene {
     if(!this.dialog.activeTextBox) {
       if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
         const playerHitbox = this.player.hitbox(0, -1)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y - 1)
         }
       }
       if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
         const playerHitbox = this.player.hitbox(-1, 0)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x - 1)
         }
       }
       if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
         const playerHitbox = this.player.hitbox(0, 1)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y + 1)
         }
       }
       if (this.keys?.D.isDown && this.player.hitbox().right < 64) {
         const playerHitbox = this.player.hitbox(1, 0)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x + 1)
         }
       }
@@ -337,8 +359,9 @@ export default class Game extends Phaser.Scene {
 
   listenForDebugInputs() {
     if (DEBUG_MODE && this.keys?.T.isDown) {
-      this.dialog.addMessage('You found the \ntreasure!')
+      this.dialog.addMessage('Sample \nmessage.')
     }
+    this.player.ghostMode = DEBUG_MODE && (this.keys?.Shift.isDown ?? false)
   }
 }
 
@@ -411,6 +434,8 @@ class Drawable {
 }
 
 class Player extends Drawable {
+  public ghostMode: boolean = false;
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 2, 2, whiteColour)
   }
