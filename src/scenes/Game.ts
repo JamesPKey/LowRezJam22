@@ -41,6 +41,7 @@ export default class Game extends Phaser.Scene {
 
     this.officeDoor = new Drawable(this, 40, 52, 2, 4, 0x5a3300, ["Obstacle"], () => {
       this.dialog.addMessage("Its a door!")
+      this.dialog.addMessage("The lock is \nhi-tech!")
       if (this.inventory.items.includes("ID Card")) {
         this.dialog.addMessage("Opened with \nID Card!")
         this.officeDoor.drawable?.destroy()
@@ -50,6 +51,7 @@ export default class Game extends Phaser.Scene {
 
     this.missingFloorboard = new Drawable(this, 27, 16, 4, 2, 0x381100, ["Obstacle"], () => {
       this.dialog.addMessage("Its a hole \nin the floor!")
+      this.dialog.addMessage("Holey moley!")
       if (this.inventory.items.includes("Plank")) {
         this.dialog.addMessage("Covered hole \nwith plank!")
         this.missingFloorboard.drawable?.destroy()
@@ -59,6 +61,7 @@ export default class Game extends Phaser.Scene {
 
     this.backDoor = new Drawable(this, 56, 16, 4, 2, 0x5a3300, ["Obstacle"], () => {
       this.dialog.addMessage("Its a door!")
+      this.dialog.addMessage("A-door-able!")
       if (this.inventory.items.includes("Back Key")) {
         this.dialog.addMessage("Opened with \nBack Key")
         this.backDoor.drawable?.destroy()
@@ -69,6 +72,7 @@ export default class Game extends Phaser.Scene {
 
     this.mirror = new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
       this.dialog.addMessage("Its a mirror!")
+      this.dialog.addMessage("No time for \nreflection!")
       if (this.inventory.items.includes("Stone")) {
         this.dialog.addMessage("Threw Stone \nat mirror!")
         this.dialog.addMessage("Mirror shattered!")
@@ -84,6 +88,7 @@ export default class Game extends Phaser.Scene {
 
     this.secretRoomShroud = new Drawable(this, 7, 10, 16, 24, 0x000000, ["Obstacle"], () => {
       this.dialog.addMessage("The mirror \nbroke!")
+      this.dialog.addMessage("Bad luck!")
       if (this.inventory.items.includes("Torch")) {
         this.dialog.addMessage("Shines the \ntorch!")
         this.dialog.addMessage("A hidden \nspace!")
@@ -133,8 +138,9 @@ export default class Game extends Phaser.Scene {
       // Front door
       new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
         this.dialog.addMessage("Its a door!")
+        this.dialog.addMessage("Locked tight!")
         if (this.inventory.items.includes("Front Key")) {
-          this.dialog.addMessage(`You win! \n${Math.ceil(this.eKeyDownTime/1000)}s`)
+          this.dialog.addMessage(`You win! \nEscaped in${Math.ceil(this.eKeyDownTime/1000)}s`)
         }
       }),
 
@@ -143,6 +149,7 @@ export default class Game extends Phaser.Scene {
       // Sink
       new Drawable(this, 2, 25, 3, 2, 0x006994, ["Obstacle"], () => {
         this.dialog.addMessage("Its a sink!")
+        this.dialog.addMessage("Not just a \nblue square!")
         if (this.inventory.items.includes("Bottle")) {
           this.dialog.addMessage("Filled up \nBottle!")
           this.inventory.items.push("Water")
@@ -153,6 +160,7 @@ export default class Game extends Phaser.Scene {
 
       new Drawable(this, 4, 39, 10, 4, 0xbbbbbb, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Bath!")
+        this.dialog.addMessage("Squeaky clean!")
       }),
 
       // Kitchen
@@ -161,12 +169,13 @@ export default class Game extends Phaser.Scene {
 
       new Drawable(this, 62, 20, 4, 4, 0xbbbbbb, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Fridge!")
+        this.dialog.addMessage("Not hungry!")
       }),
 
       new Drawable(this, 62, 26, 4, 4, 0x333333, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Cooker!")
         if (this.inventory.items.includes("Match")) {
-          this.dialog.addMessage("Cooker lit \n with match!")
+          this.dialog.addMessage("Cooker lit \nwith match!")
         }
         if (!this.inventory.items.includes("Back Key") && this.inventory.items.includes("Ice Block")) {
           this.dialog.addMessage("Melted \nIce Block!")
@@ -177,6 +186,7 @@ export default class Game extends Phaser.Scene {
 
       new Drawable(this, 62, 32, 4, 4, 0xbbbbbb, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Freezer!")
+        this.dialog.addMessage("Cool!")
         if (!this.inventory.items.includes("Ice Block")) {
           this.dialog.addMessage("Picked up \nIce Block!")
           this.inventory.items.push("Ice Block")
@@ -214,18 +224,20 @@ export default class Game extends Phaser.Scene {
 
       new Drawable(this, 22, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
+        this.dialog.addMessage("Empty!")
       }),
 
       new Drawable(this, 27, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
+        this.dialog.addMessage("Still empty!")
       }),
 
       new Drawable(this, 32, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
         if (!this.inventory.items.includes("Torch")) {
-          this.dialog.addMessage("Handle is\n slippery!")
+          this.dialog.addMessage("Handle is \nslippery!")
           if (this.inventory.items.includes("Water")){
-            this.dialog.addMessage("Clean handle \n with water!")
+            this.dialog.addMessage("Clean handle \nwith water!")
             this.dialog.addMessage("Picked up \nTorch!")
             this.inventory.items.push("Torch")
           }
@@ -246,11 +258,13 @@ export default class Game extends Phaser.Scene {
       // Sofa
       new Drawable(this, 20, 50, 4, 12, 0xf898c8, [], () => {
         this.dialog.addMessage("Its a sofa!")
+        this.dialog.addMessage("Get down!")
       }),
 
       // Rug
       new Drawable(this, 10, 54, 12, 12, 0x8b0000, [], () => {
         this.dialog.addMessage("Its a rug!")
+        this.dialog.addMessage("Beautiful!")
       }),
 
       // Garden
@@ -270,7 +284,7 @@ export default class Game extends Phaser.Scene {
         if (!this.inventory.items.includes("Planks")) {
           this.dialog.addMessage("The lock \nis tied!")
           if (this.inventory.items.includes("Mirror")) {
-            this.dialog.addMessage("Cut the rope\n with the mirror!")
+            this.dialog.addMessage("Cut the rope \nwith the mirror!")
             this.dialog.addMessage("Picked up \nPlank!")
             this.inventory.items.push("Plank")
           }
@@ -313,7 +327,7 @@ export default class Game extends Phaser.Scene {
     if (!DEBUG_MODE) {
       // Initial text
       this.dialog.addMessage("Where am I?")
-      this.dialog.addMessage("Need to  \nescape!")
+      this.dialog.addMessage("Need to\n escape!")
     }
   }
 
