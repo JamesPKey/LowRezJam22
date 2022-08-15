@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import replace from '@rollup/plugin-replace';
+import { viteSingleFile } from "vite-plugin-singlefile"
 
 export default defineConfig({
   build: {
@@ -13,7 +14,8 @@ export default defineConfig({
           'typeof PLUGIN_CAMERA3D': "'false'",
           'typeof PLUGIN_FBINSTANT': "'false'",
           'typeof FEATURE_SOUND': "'true'"
-        })
+        }),
+        viteSingleFile()
       ]
     }
   }

@@ -63,9 +63,9 @@ export default class Game extends Phaser.Scene {
         this.dialog.addMessage("Mirror shattered!")
         this.dialog.addMessage("Picked up \nmirror shard!")
         this.inventory.items.push("Mirror")
+        this.mirror.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.mirror)
       }
-      this.mirror.drawable?.destroy()
-      this.drawables = this.drawables.filter(drawable => drawable != this.mirror)
     })
 
     this.gardenShroud = new Drawable(this, 52, 7, 24, 16, 0x000000, ["Obstacle"], () => {
