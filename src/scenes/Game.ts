@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
-const DEBUG_MODE = true // Disabled this before publish
+const DEBUG_MODE = false // Disabled this before publish
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
