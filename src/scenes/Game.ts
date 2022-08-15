@@ -18,6 +18,8 @@ export default class Game extends Phaser.Scene {
   private missingFloorboard!: Drawable;
   private backDoor!: Drawable;
   private mirror!: Drawable;
+  private gardenShroud!: Drawable;
+  private secretRoomShroud!: Drawable;
 
   constructor() {
     super('GameScene');
@@ -49,7 +51,8 @@ export default class Game extends Phaser.Scene {
       if (this.inventory.items.includes("Back Key")) {
         this.dialog.addMessage("Opened with \nBack Key")
         this.backDoor.drawable?.destroy()
-        this.drawables = this.drawables.filter(drawable => drawable != this.backDoor)
+        this.gardenShroud.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.backDoor && drawable != this.gardenShroud)
       }
     })
 
@@ -63,7 +66,20 @@ export default class Game extends Phaser.Scene {
       }
       this.mirror.drawable?.destroy()
       this.drawables = this.drawables.filter(drawable => drawable != this.mirror)
-    }),
+    })
+
+    this.gardenShroud = new Drawable(this, 52, 7, 24, 16, 0x000000, ["Obstacle"], () => {
+    })
+
+    this.secretRoomShroud = new Drawable(this, 7, 10, 16, 24, 0x000000, ["Obstacle"], () => {
+      this.dialog.addMessage("The mirror \nbroke!")
+      if (this.inventory.items.includes("Torch")) {
+        this.dialog.addMessage("Shines the \ntorch!")
+        this.dialog.addMessage("A hidden \nspace!")
+        this.secretRoomShroud.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.secretRoomShroud)
+      }
+    })
 
     this.drawables.push(
       // House floor
@@ -73,7 +89,8 @@ export default class Game extends Phaser.Scene {
 
       // Top Left room
       new Obstacle(this, 15, 12, 2, 24),
-      new Obstacle(this, 8, 23, 16, 2),
+      new Obstacle(this, 3, 23, 6, 2),
+      new Obstacle(this, 13, 23, 6, 2),
 
       // Top Middle room
       new Obstacle(this, 20, 16, 10, 2),
@@ -184,21 +201,23 @@ export default class Game extends Phaser.Scene {
 
       this.missingFloorboard,
 
-      new Drawable(this, 22, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 22, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
       }),
 
-      new Drawable(this, 27, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 27, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
       }),
 
-      new Drawable(this, 32, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+      new Drawable(this, 32, 2, 4, 4, 0xdcb579, ["Obstacle"], () => {
         this.dialog.addMessage("Its a Drawer!")
         if (!this.inventory.items.includes("Torch")) {
           this.dialog.addMessage("Handle is\n slippery!")
-          this.dialog.addMessage("Clean handle \n with water!")
-          this.dialog.addMessage("Picked up \nTorch!")
-          this.inventory.items.push("Torch")
+          if (this.inventory.items.includes("Water")){
+            this.dialog.addMessage("Clean handle \n with water!")
+            this.dialog.addMessage("Picked up \nTorch!")
+            this.inventory.items.push("Torch")
+          }
         }
       }),
 
@@ -256,6 +275,8 @@ export default class Game extends Phaser.Scene {
         }
       }),
 
+      this.gardenShroud,
+
       //Secret Room
 
       //Key
@@ -264,7 +285,9 @@ export default class Game extends Phaser.Scene {
           this.dialog.addMessage("Picked up key!")
           this.inventory.items.push("Front Key")
         }
-      })
+      }),
+
+      this.secretRoomShroud
     )
 
     this.drawables.forEach(drawable => drawable.createDrawable())
