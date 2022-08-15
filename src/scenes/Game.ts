@@ -110,6 +110,7 @@ export default class Game extends Phaser.Scene {
     this.drawables.forEach(drawable => drawable.createDrawable())
 
     this.player = new Player(this, 32, 32)
+    this.player.createDrawable()
 
     this.dialog = new Dialog(this)
 
@@ -208,7 +209,7 @@ class Drawable {
   }
 
   createDrawable() {
-    this.scene.add.rectangle(this.x, this.y, this.w, this.h, this.colour)
+    this.drawable = this.scene.add.rectangle(this.x, this.y, this.w, this.h, this.colour)
   }
 
   setX = (x: number) => {
