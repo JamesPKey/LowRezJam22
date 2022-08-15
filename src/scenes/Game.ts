@@ -6,6 +6,7 @@ const DEBUG_MODE = true // Disabled this before publish
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
   private eKeyDown: boolean = false
+  private eKeyDownTime: number = 0
 
   private player!: Player;
   private drawables: Obstacle[] = []
@@ -72,6 +73,9 @@ export default class Game extends Phaser.Scene {
       // Front door
       new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
         this.dialog.addMessage("Its a door!")
+        if (this.inventory.items.includes("Front Key")) {
+          this.dialog.addMessage(`You win! \n${Math.ceil(this.eKeyDownTime/1000)}s`)
+        }
       }),
 
       // Back door
@@ -137,6 +141,7 @@ export default class Game extends Phaser.Scene {
       if (!this.eKeyDown) { this.eKeyDown = true}
     } else if (this.eKeyDown) {
       this.eKeyDown = false
+      this.eKeyDownTime = time
       if(!!this.dialog.activeTextBox) {
         // Close any active textbox
         this.dialog.nextMessage();
