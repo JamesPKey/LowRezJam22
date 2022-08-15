@@ -12,7 +12,7 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio("music-loop", ["../assets/audio/music-loop.wav"]);
+    this.load.audio("music-loop", ["assets/audio/music-loop.wav"]);
   }
 
   create() {
