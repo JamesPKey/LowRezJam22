@@ -5,14 +5,14 @@ export default class MenuScene extends Phaser.Scene {
   private keys?: InputControls;
   private selection = 0;
   private menuIndicator: any;
-  private music: any;
+  private music!: Phaser.Sound.BaseSound;
 
   constructor() {
     super('MenuScene');
   }
 
   preload() {
-    this.load.audio("music-loop", ["assets/audio/music-loop.wav"]);
+    this.load.audio("menu-music", ["assets/audio/Menu.mp3"]);
   }
 
   create() {
@@ -44,8 +44,8 @@ export default class MenuScene extends Phaser.Scene {
     helpText.setColor("#fff")
     helpText.setOrigin(0.5, 0.5)
 
-    this.music = this.sound.add("music-loop", { loop: true });
-    if (!this.sound.get("music-loop").isPlaying) {
+    this.music = this.sound.add("menu-music", { loop: true });
+    if (!this.sound.get("menu-music").isPlaying) {
       this.music.play() 
     }
   }
@@ -59,13 +59,14 @@ export default class MenuScene extends Phaser.Scene {
       this.selection = 1
       this.menuIndicator.setPosition(12, 48)
     }
-    if(this.keys?.E.isDown) {
+    if (this.keys?.E.isDown) {
       if (this.selection == 0) {
+        this.music.stop();
+        this.sound.removeByKey("menu-music");
         this.scene.start('GameScene');
       } else {
         this.scene.start('HelpScene');
       }
-  
     }
   }
   

@@ -21,12 +21,23 @@ export default class Game extends Phaser.Scene {
   private gardenShroud!: Drawable;
   private secretRoomShroud!: Drawable;
 
+  private music!: Phaser.Sound.BaseSound;
+
   constructor() {
     super('GameScene');
   }
 
+  preload() {
+    this.load.audio("game-music", ['assets/audio/Horror.mp3']);
+  }
+
   create() {
     this.registerInputs()
+
+    this.music = this.sound.add("game-music", { loop: true });
+    if (!this.sound.get("game-music").isPlaying) {
+      this.music.play() 
+    }
 
     this.officeDoor = new Drawable(this, 40, 52, 2, 4, 0x5a3300, ["Obstacle"], () => {
       this.dialog.addMessage("Its a door!")
