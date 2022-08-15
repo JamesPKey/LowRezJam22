@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
-const DEBUG_MODE = true // Disabled this before publish
+const DEBUG_MODE = false // Disabled this before publish
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
@@ -176,11 +176,11 @@ export default class Game extends Phaser.Scene {
         this.dialog.addMessage("Its a Cooker!")
         if (this.inventory.items.includes("Match")) {
           this.dialog.addMessage("Cooker lit \nwith match!")
-        }
-        if (!this.inventory.items.includes("Back Key") && this.inventory.items.includes("Ice Block")) {
-          this.dialog.addMessage("Melted \nIce Block!")
-          this.dialog.addMessage("Picked up \nBack Key!")
-          this.inventory.items.push("Back Key")
+          if (!this.inventory.items.includes("Back Key") && this.inventory.items.includes("Ice Block")) {
+            this.dialog.addMessage("Melted \nIce Block!")
+            this.dialog.addMessage("Picked up \nBack Key!")
+            this.inventory.items.push("Back Key")
+          }
         }
       }),
 
