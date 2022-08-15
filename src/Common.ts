@@ -5,6 +5,7 @@ class InputControls {
     public D: Phaser.Input.Keyboard.Key
     public E: Phaser.Input.Keyboard.Key
     public T: Phaser.Input.Keyboard.Key
+    public Shift: Phaser.Input.Keyboard.Key
     
     constructor(scene: Phaser.Scene) {
       this.W = scene.input.keyboard.addKey('W')
@@ -13,6 +14,7 @@ class InputControls {
       this.D = scene.input.keyboard.addKey('D')
       this.E = scene.input.keyboard.addKey('E')
       this.T = scene.input.keyboard.addKey('T')
+      this.Shift = scene.input.keyboard.addKey('Shift')
     }
   }
 

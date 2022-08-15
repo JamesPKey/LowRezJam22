@@ -2,7 +2,6 @@ import Phaser from 'phaser';
 import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
-const DEBUG_GHOST_MODE = true //Disable collision
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
@@ -311,25 +310,25 @@ export default class Game extends Phaser.Scene {
     if(!this.dialog.activeTextBox) {
       if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
         const playerHitbox = this.player.hitbox(0, -1)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y - 1)
         }
       }
       if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
         const playerHitbox = this.player.hitbox(-1, 0)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x - 1)
         }
       }
       if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
         const playerHitbox = this.player.hitbox(0, 1)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y + 1)
         }
       }
       if (this.keys?.D.isDown && this.player.hitbox().right < 64) {
         const playerHitbox = this.player.hitbox(1, 0)
-        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (this.player.ghostMode || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x + 1)
         }
       }
@@ -360,8 +359,9 @@ export default class Game extends Phaser.Scene {
 
   listenForDebugInputs() {
     if (DEBUG_MODE && this.keys?.T.isDown) {
-      this.dialog.addMessage('You found the \ntreasure!')
+      this.dialog.addMessage('Sample \nmessage.')
     }
+    this.player.ghostMode = DEBUG_MODE && (this.keys?.Shift.isDown ?? false)
   }
 }
 
@@ -434,6 +434,8 @@ class Drawable {
 }
 
 class Player extends Drawable {
+  public ghostMode: boolean = false;
+
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, 2, 2, whiteColour)
   }
