@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { blackColour, gameFont, InputControls, textboxColour, whiteColour } from '../Common';
 
 const DEBUG_MODE = true // Disabled this before publish
+const DEBUG_GHOST_MODE = true //Disable collision
 
 export default class Game extends Phaser.Scene {
   private keys?: InputControls;
@@ -28,7 +29,8 @@ export default class Game extends Phaser.Scene {
       new Drawable(this, 52, 8, 24, 16, 0x7ec850),
 
       // Top Left room
-      new Obstacle(this, 8, 12, 16, 24),
+      new Obstacle(this, 15, 12, 2, 24),
+      new Obstacle(this, 8, 23, 16, 2),
 
       // Top Middle room
       new Obstacle(this, 20, 16, 10, 2),
@@ -65,6 +67,7 @@ export default class Game extends Phaser.Scene {
           this.inventory.items.push("Water")
         }
       }),
+
       // Mirror
       new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
         this.dialog.addMessage("Its a mirror!")
@@ -95,8 +98,16 @@ export default class Game extends Phaser.Scene {
           this.dialog.addMessage("Picked up \nBottle!")
           this.inventory.items.push("Bottle")
         }
+      }),
+
+      //Key
+      new Drawable(this, 2, 1, 2, 2, 0x404040, ["Obstacle"], () => {
+        this.dialog.addMessage("Picked up key!")
+        this.inventory.items.push("Front Key")
       })
     )
+
+    this.drawables.forEach(drawable => drawable.createDrawable())
 
     this.player = new Player(this, 32, 32)
 
@@ -113,25 +124,25 @@ export default class Game extends Phaser.Scene {
     if(!this.dialog.activeTextBox) {
       if (this.keys?.W.isDown && this.player.hitbox().top > 0) {
         const playerHitbox = this.player.hitbox(0, -1)
-        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y - 1)
         }
       }
       if (this.keys?.A.isDown && this.player.hitbox().left > 0) {
         const playerHitbox = this.player.hitbox(-1, 0)
-        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x - 1)
         }
       }
       if (this.keys?.S.isDown && this.player.hitbox().bottom < 64) {
         const playerHitbox = this.player.hitbox(0, 1)
-        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setY(this.player.y + 1)
         }
       }
       if (this.keys?.D.isDown && this.player.hitbox().right < 64) {
         const playerHitbox = this.player.hitbox(1, 0)
-        if (!this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
+        if (DEBUG_GHOST_MODE || !this.drawables.find(drawable => drawable.flags.includes('Obstacle') && drawable.collides(playerHitbox))) {
           this.player.setX(this.player.x + 1)
         }
       }
@@ -175,22 +186,29 @@ interface TextBox {
 type Flag = 'Obstacle'
 
 class Drawable {
+  public scene: Phaser.Scene
   public x: number
   public y: number
   public w: number
   public h: number
+  public colour: number
   public flags: Flag[]
-  public drawable: any
+  public drawable?: any
   public interaction: any
 
   constructor(scene: Phaser.Scene, x: number, y: number, w: number, h: number, colour: number, flags: Flag[] = [], interaction?: any) {
+    this.scene = scene
     this.x = x
     this.y = y
     this.w = w
     this.h = h
     this.flags = flags
-    this.drawable = scene.add.rectangle(this.x, this.y, this.w, this.h, colour)
+    this.colour = colour
     this.interaction = interaction
+  }
+
+  createDrawable() {
+    this.scene.add.rectangle(this.x, this.y, this.w, this.h, this.colour)
   }
 
   setX = (x: number) => {
