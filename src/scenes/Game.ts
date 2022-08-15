@@ -90,7 +90,8 @@ export default class Game extends Phaser.Scene {
 
       // Top Left room
       new Obstacle(this, 15, 12, 2, 24),
-      new Obstacle(this, 8, 23, 16, 2),
+      new Obstacle(this, 3, 23, 6, 2),
+      new Obstacle(this, 13, 23, 6, 2),
 
       // Top Middle room
       new Obstacle(this, 20, 16, 10, 2),
