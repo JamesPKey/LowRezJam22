@@ -3,14 +3,17 @@ import { gameFont, InputControls } from '../Common';
 
 export default class MenuScene extends Phaser.Scene {
   private keys?: InputControls;
-  private selection = 0
-  private menuIndicator: any
+  private selection = 0;
+  private menuIndicator: any;
+  private music: any;
 
   constructor() {
     super('MenuScene');
   }
 
-  preload() {}
+  preload() {
+    this.load.audio("music-loop", ["../assets/audio/music-loop.wav"]);
+  }
 
   create() {
     const logo = this.add.text(32, 8, "Escape", {
@@ -40,6 +43,11 @@ export default class MenuScene extends Phaser.Scene {
     const helpText = this.add.text(32, 48, "Help", gameFont)
     helpText.setColor("#fff")
     helpText.setOrigin(0.5, 0.5)
+
+    this.music = this.sound.add("music-loop", { loop: true });
+    if (!this.sound.get("music-loop").isPlaying) {
+      this.music.play() 
+    }
   }
 
   update() {
