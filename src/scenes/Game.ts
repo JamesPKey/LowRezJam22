@@ -15,12 +15,56 @@ export default class Game extends Phaser.Scene {
   private dialog!: Dialog;
   private inventory!: Inventory;
 
+  private officeDoor!: Drawable;
+  private missingFloorboard!: Drawable;
+  private backDoor!: Drawable;
+  private mirror!: Drawable;
+
   constructor() {
     super('GameScene');
   }
 
   create() {
     this.registerInputs()
+
+    this.officeDoor = new Drawable(this, 40, 52, 2, 4, 0x5a3300, ["Obstacle"], () => {
+      this.dialog.addMessage("Its a door!")
+      if (this.inventory.items.includes("ID Card")) {
+        this.dialog.addMessage("Opened with \nID Card!")
+        this.officeDoor.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.officeDoor)
+      }
+    })
+
+    this.missingFloorboard = new Drawable(this, 27, 16, 4, 2, 0x381100, ["Obstacle"], () => {
+      this.dialog.addMessage("Its a hole \nin the floor!")
+      if (this.inventory.items.includes("Plank")) {
+        this.dialog.addMessage("Covered hole \nwith plank!")
+        this.missingFloorboard.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.missingFloorboard)
+      }
+    })
+
+    this.backDoor = new Drawable(this, 56, 16, 4, 2, 0x5a3300, ["Obstacle"], () => {
+      this.dialog.addMessage("Its a door!")
+      if (this.inventory.items.includes("Back Key")) {
+        this.dialog.addMessage("Opened with \nBack Key")
+        this.backDoor.drawable?.destroy()
+        this.drawables = this.drawables.filter(drawable => drawable != this.backDoor)
+      }
+    })
+
+    this.mirror = new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
+      this.dialog.addMessage("Its a mirror!")
+      if (this.inventory.items.includes("Stone")) {
+        this.dialog.addMessage("Threw Stone \nat mirror!")
+        this.dialog.addMessage("Mirror shattered!")
+        this.dialog.addMessage("Picked up \nmirror shard!")
+        this.inventory.items.push("Mirror")
+      }
+      this.mirror.drawable?.destroy()
+      this.drawables = this.drawables.filter(drawable => drawable != this.mirror)
+    }),
 
     this.drawables.push(
       // House floor
@@ -59,20 +103,6 @@ export default class Game extends Phaser.Scene {
       new Obstacle(this, 21, 42, 8, 2),
       new Obstacle(this, 12, 35, 6, 2),
 
-      // Sink
-      new Drawable(this, 42, 18, 2, 2, 0x006994, [], () => {
-        this.dialog.addMessage("Its a sink!")
-        if (this.inventory.items.includes("Bottle")) {
-          this.dialog.addMessage("Filled up \nBottle!")
-          this.inventory.items.push("Water")
-        }
-      }),
-
-      // Mirror
-      new Drawable(this, 8, 23, 4, 2, 0xc0c0c0, ["Obstacle"], () => {
-        this.dialog.addMessage("Its a mirror!")
-      }),
-
       // Front door
       new Drawable(this, 32, 63, 4, 2, 0x5a3300, ["Obstacle"], () => {
         this.dialog.addMessage("Its a door!")
@@ -81,17 +111,122 @@ export default class Game extends Phaser.Scene {
         }
       }),
 
-      // Back door
-      new Drawable(this, 56, 16, 4, 2, 0x5a3300, ["Obstacle"], () => {
-        this.dialog.addMessage("Its a door!")
+      // Bathroom
+
+      // Sink
+      new Drawable(this, 2, 25, 3, 2, 0x006994, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a sink!")
+        if (this.inventory.items.includes("Bottle")) {
+          this.dialog.addMessage("Filled up \nBottle!")
+          this.inventory.items.push("Water")
+        }
       }),
 
-      // Back hole
-      new Drawable(this, 27, 16, 4, 2, 0x381100, ["Obstacle"], () => {
-        this.dialog.addMessage("Its a hole!")
+      this.mirror,
+
+      new Drawable(this, 4, 39, 10, 4, 0xbbbbbb, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Bath!")
+      }),
+
+      // Kitchen
+
+      this.backDoor,
+
+      new Drawable(this, 62, 20, 4, 4, 0xbbbbbb, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Fridge!")
+      }),
+
+      new Drawable(this, 62, 26, 4, 4, 0x333333, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Cooker!")
+        if (this.inventory.items.includes("Match")) {
+          this.dialog.addMessage("Cooker lit \n with match!")
+        }
+        if (!this.inventory.items.includes("Back Key") && this.inventory.items.includes("Ice Block")) {
+          this.dialog.addMessage("Melted \nIce Block!")
+          this.dialog.addMessage("Picked up \nBack Key!")
+          this.inventory.items.push("Back Key")
+        }
+      }),
+
+      new Drawable(this, 62, 32, 4, 4, 0xbbbbbb, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Freezer!")
+        if (!this.inventory.items.includes("Ice Block")) {
+          this.dialog.addMessage("Picked up \nIce Block!")
+          this.inventory.items.push("Ice Block")
+        }
+      }),
+
+      // Office
+
+      // Office door
+      this.officeDoor,
+
+      // Desk
+      new Obstacle(this, 52, 47, 12, 4, 0xbbbbbb),
+
+      // Chair
+      new Drawable(this, 52, 50, 4, 2, 0x8b0000),
+
+      // Computer
+      new Drawable(this, 52, 48, 4, 2, 0xadd8e6, ["Obstacle"], () => {
+        this.dialog.addMessage("Computer \nsays no!")
       }),
 
       //Bin
+      new Drawable(this, 59, 46, 2, 2, 0x404040, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a bin!")
+        if (!this.inventory.items.includes("Match")) {
+          this.dialog.addMessage("Picked up \nMatch!")
+          this.inventory.items.push("Match")
+        }
+      }),
+
+      // Cellar
+
+      this.missingFloorboard,
+
+      new Drawable(this, 22, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Drawer!")
+      }),
+
+      new Drawable(this, 27, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Drawer!")
+      }),
+
+      new Drawable(this, 32, 2, 4, 4, 0x333333, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Drawer!")
+        if (!this.inventory.items.includes("Torch")) {
+          this.dialog.addMessage("Handle is\n slippery!")
+          this.dialog.addMessage("Clean handle \n with water!")
+          this.dialog.addMessage("Picked up \nTorch!")
+          this.inventory.items.push("Torch")
+        }
+      }),
+
+      // Lounge
+
+      // Chair
+      new Drawable(this, 2, 45, 6, 4, 0xf898c8, [], () => {
+        this.dialog.addMessage("Its a chair!")
+        if (!this.inventory.items.includes("ID Card")) {
+          this.dialog.addMessage("Picked up \nID Card!")
+          this.inventory.items.push("ID Card")
+        }
+      }),
+
+      // Sofa
+      new Drawable(this, 20, 50, 4, 12, 0xf898c8, [], () => {
+        this.dialog.addMessage("Its a sofa!")
+      }),
+
+      // Rug
+      new Drawable(this, 10, 54, 12, 12, 0x8b0000, [], () => {
+        this.dialog.addMessage("Its a rug!")
+      }),
+
+      // Garden
+
+      // Bin
       new Drawable(this, 42, 1, 2, 2, 0x404040, ["Obstacle"], () => {
         this.dialog.addMessage("Its a bin!")
         if (!this.inventory.items.includes("Bottle")) {
@@ -100,10 +235,36 @@ export default class Game extends Phaser.Scene {
         }
       }),
 
+      // Shed
+      new Drawable(this, 60, 1, 4, 6, 0x6e470b, ["Obstacle"], () => {
+        this.dialog.addMessage("Its a Shed!")
+        if (!this.inventory.items.includes("Planks")) {
+          this.dialog.addMessage("The lock \nis tied!")
+          if (this.inventory.items.includes("Mirror")) {
+            this.dialog.addMessage("Cut the rope\n with the mirror!")
+            this.dialog.addMessage("Picked up \nPlank!")
+            this.inventory.items.push("Plank")
+          }
+        }
+      }),
+
+      // Stone
+      new Drawable(this, 42, 14, 1, 1, 0x303030, [], () => {
+        this.dialog.addMessage("Its a stone!")
+        if (!this.inventory.items.includes("Stone")) {
+          this.dialog.addMessage("Picked up \nStone!")
+          this.inventory.items.push("Stone")
+        }
+      }),
+
+      //Secret Room
+
       //Key
       new Drawable(this, 2, 1, 2, 2, 0x404040, ["Obstacle"], () => {
-        this.dialog.addMessage("Picked up key!")
-        this.inventory.items.push("Front Key")
+        if (!this.inventory.items.includes("Front Key")) {
+          this.dialog.addMessage("Picked up key!")
+          this.inventory.items.push("Front Key")
+        }
       })
     )
 
@@ -116,9 +277,11 @@ export default class Game extends Phaser.Scene {
 
     this.inventory = new Inventory()
 
-    // Initial text
-    this.dialog.addMessage("Where am I?")
-    this.dialog.addMessage("Need to  \nescape!")
+    if (!DEBUG_MODE) {
+      // Initial text
+      this.dialog.addMessage("Where am I?")
+      this.dialog.addMessage("Need to  \nescape!")
+    }
   }
 
   update(time: number) {
